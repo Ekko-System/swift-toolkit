@@ -20,7 +20,7 @@ enum EPUBScriptScope {
     case resource(href: AnyURL)
 }
 
-final class EPUBNavigatorViewModel: Loggable {
+public final class EPUBNavigatorViewModel: Loggable {
     enum Error: Swift.Error {
         case noHTTPServer
     }

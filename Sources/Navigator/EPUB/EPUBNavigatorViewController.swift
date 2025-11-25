@@ -314,7 +314,7 @@ open class EPUBNavigatorViewController: InputObservableViewController,
         )
     }
 
-    private init(
+    public init(
         viewModel: EPUBNavigatorViewModel,
         initialLocation: Locator?,
         readingOrder: [Link],
@@ -965,6 +965,11 @@ open class EPUBNavigatorViewController: InputObservableViewController,
         }
         return true
     }
+    
+    /// Hook to override and inject custom page views.
+    open func willCreatePageView(at index: Int) -> (UIView & PageView)? {
+        return nil
+    }
 }
 
 extension EPUBNavigatorViewController: EPUBNavigatorViewModelDelegate {
@@ -1257,7 +1262,14 @@ extension EPUBNavigatorViewController: EditingActionsControllerDelegate {
 }
 
 extension EPUBNavigatorViewController: PaginationViewDelegate {
-    func paginationView(_ paginationView: PaginationView, pageViewAtIndex index: Int) -> (UIView & PageView)? {
+    public func paginationView(_ paginationView: PaginationView, pageViewAtIndex index: Int) -> (UIView & PageView)? {
+        
+        // 1) Hook custom pour permettre d’intercepter le rendu
+        if let custom = willCreatePageView(at: index) {
+            return custom
+        }
+
+        // 2) fallback Readium
         let spread = spreads[index]
         let spreadViewType = (publication.metadata.layout == .fixed) ? EPUBFixedSpreadView.self : EPUBReflowableSpreadView.self
         let spreadView = spreadViewType.init(
@@ -1274,14 +1286,16 @@ extension EPUBNavigatorViewController: PaginationViewDelegate {
         return spreadView
     }
 
-    func paginationViewDidUpdateViews(_ paginationView: PaginationView) {
+    public func paginationViewDidUpdateViews(_ paginationView: PaginationView) {
         // Note that you should set the delegate before you load views
         // otherwise, when open the publication, you may miss the first
         // invocation.
         updateCurrentLocation()
     }
 
-    func paginationView(_ paginationView: PaginationView, positionCountAtIndex index: Int) -> Int {
+    public func paginationView(_ paginationView: PaginationView, positionCountAtIndex index: Int) -> Int {
         spreads[index].positionCount(in: readingOrder, positionsByReadingOrder: positionsByReadingOrder)
     }
+    
+ 
 }

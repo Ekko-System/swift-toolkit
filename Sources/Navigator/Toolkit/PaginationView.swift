@@ -7,7 +7,7 @@
 import ReadiumShared
 import UIKit
 
-enum PageLocation: Equatable {
+public enum PageLocation: Equatable {
     case start
     case end
     case locator(Locator)
@@ -29,12 +29,12 @@ enum PageLocation: Equatable {
     }
 }
 
-protocol PageView {
+public protocol PageView {
     /// Moves the page to the given internal location.
     func go(to location: PageLocation) async
 }
 
-protocol PaginationViewDelegate: AnyObject {
+public protocol PaginationViewDelegate: AnyObject {
     /// Creates the page view for the page at given index.
     func paginationView(_ paginationView: PaginationView, pageViewAtIndex index: Int) -> (UIView & PageView)?
 
@@ -45,7 +45,7 @@ protocol PaginationViewDelegate: AnyObject {
     func paginationView(_ paginationView: PaginationView, positionCountAtIndex index: Int) -> Int
 }
 
-final class PaginationView: UIView, Loggable {
+public final class PaginationView: UIView, Loggable {
     weak var delegate: PaginationViewDelegate?
 
     /// Total number of page views to be paginated.
@@ -150,7 +150,7 @@ final class PaginationView: UIView, Loggable {
         scrollView.contentOffset.x = xOffsetForIndex(currentIndex)
     }
 
-    override func didMoveToWindow() {
+    public override func didMoveToWindow() {
         super.didMoveToWindow()
 
         if window == nil {
@@ -366,15 +366,15 @@ extension PaginationView: UIScrollViewDelegate {
     /// Note: using this approach might provide a better experience:
     /// https://oleb.net/blog/2014/05/scrollviews-inside-scrollviews/
 
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+    public func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         scrollView.isScrollEnabled = false
     }
 
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+    public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         scrollView.isScrollEnabled = isScrollEnabled
     }
 
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if !decelerate {
             scrollView.isScrollEnabled = isScrollEnabled
         }
